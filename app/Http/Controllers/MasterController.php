@@ -31,30 +31,27 @@ class MasterController extends Controller
             abort(403);
         }
 
-        if ($repairRequest->status !== 'assigned') {
-            return back()->with('error', 'Заявка уже взята в работу или имеет другой статус.');
-        }
-
-        // Concurrency handling
         try {
-            DB::beginTransaction();
+            DB::transaction(function () use ($repairRequest) {
+                $requestToUpdate = RepairRequest::where('id', $repairRequest->id)
+                    ->where('status', 'assigned')
+                    ->lockForUpdate()
+                    ->first();
 
-            $updated = RepairRequest::where('id', $repairRequest->id)
-                                    ->where('status', 'assigned')
-                                    ->update(['status' => 'in_progress']);
+                if (!$requestToUpdate) {
+                    // This will be caught by the outer catch block and result in a generic error.
+                    // For a more specific message, we'd need a custom exception.
+                    throw new \Exception('Could not obtain lock or status has changed.');
+                }
 
-            if (!$updated) {
-                DB::rollBack();
-                return back()->with('error', 'Заявка уже была взята в работу другим мастером или ее статус изменился.');
-            }
-
-            DB::commit();
-            return back()->with('success', 'Заявка успешно взята в работу!');
-
+                $requestToUpdate->status = 'in_progress';
+                $requestToUpdate->save(); // This will trigger the observer
+            });
         } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Произошла ошибка при попытке взять заявку в работу: ' . $e->getMessage());
+            return back()->with('error', 'Заявка уже была взята в работу другим мастером или ее статус изменился.');
         }
+
+        return back()->with('success', 'Заявка успешно взята в работу!');
     }
 
     public function complete(RepairRequest $repairRequest)
@@ -67,7 +64,8 @@ class MasterController extends Controller
             return back()->with('error', 'Заявка не находится в статусе "в работе".');
         }
 
-        $repairRequest->update(['status' => 'done']);
+        $repairRequest->status = 'done';
+        $repairRequest->save(); // This will trigger the observer
 
         return back()->with('success', 'Заявка успешно завершена!');
     }

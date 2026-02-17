@@ -37,10 +37,9 @@ class DispatcherController extends Controller
             'master_id' => 'required|exists:users,id',
         ]);
 
-        $repairRequest->update([
-            'assigned_to' => $validated['master_id'],
-            'status' => 'assigned',
-        ]);
+        $repairRequest->assigned_to = $validated['master_id'];
+        $repairRequest->status = 'assigned';
+        $repairRequest->save();
 
         return back()->with('success', 'Мастер успешно назначен.');
     }
@@ -51,10 +50,9 @@ class DispatcherController extends Controller
             abort(403);
         }
 
-        $repairRequest->update([
-            'status' => 'canceled',
-            'assigned_to' => null, // Unassign master if canceled
-        ]);
+        $repairRequest->status = 'canceled';
+        $repairRequest->assigned_to = null; // Unassign master if canceled
+        $repairRequest->save();
 
         return back()->with('success', 'Заявка успешно отменена.');
     }
