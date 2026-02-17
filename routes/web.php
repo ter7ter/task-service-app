@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RequestController;
-use App\Http\Controllers\DispatcherController; // Added
+use App\Http\Controllers\DispatcherController;
+use App\Http\Controllers\MasterController; // Added
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth; // Added for Auth::user() in routes
 
@@ -33,13 +34,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dispatcher/requests/{repairRequest}/cancel', [DispatcherController::class, 'cancel'])->name('dispatcher.requests.cancel');
     });
 
-    // Master Routes (Placeholder for now)
-    Route::get('/master', function () {
-        if (Auth::user()->role !== 'master') {
-            abort(403);
-        }
-        return view('master.dashboard');
-    })->name('master.dashboard');
+    // Master Routes
+    Route::middleware(['role:master'])->group(function () {
+        Route::get('/master', [MasterController::class, 'index'])->name('master.dashboard');
+        Route::post('/master/requests/{repairRequest}/take-in-work', [MasterController::class, 'takeInWork'])->name('master.requests.take_in_work');
+        Route::post('/master/requests/{repairRequest}/complete', [MasterController::class, 'complete'])->name('master.requests.complete');
+    });
 });
 
 // Request management routes (publicly accessible for creation)
