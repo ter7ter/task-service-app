@@ -58,4 +58,15 @@ class DispatcherController extends Controller
 
         return back()->with('success', 'Заявка успешно отменена.');
     }
+
+    public function history(RepairRequest $repairRequest)
+    {
+        if (Auth::user()->role !== 'dispatcher') {
+            abort(403);
+        }
+
+        $logs = $repairRequest->history()->with('user')->get();
+
+        return view('dispatcher.requests.history', ['request' => $repairRequest, 'logs' => $logs]);
+    }
 }

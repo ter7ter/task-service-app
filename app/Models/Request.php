@@ -22,4 +22,9 @@ class Request extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+
+    public function history()
+    {
+        return $this->hasMany(RequestLog::class)->latest();
+    }
 }

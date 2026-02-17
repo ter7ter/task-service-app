@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dispatcher', [DispatcherController::class, 'index'])->name('dispatcher.dashboard');
         Route::post('/dispatcher/requests/{repairRequest}/assign', [DispatcherController::class, 'assign'])->name('dispatcher.requests.assign');
         Route::post('/dispatcher/requests/{repairRequest}/cancel', [DispatcherController::class, 'cancel'])->name('dispatcher.requests.cancel');
+        Route::get('/dispatcher/requests/{repairRequest}/history', [DispatcherController::class, 'history'])->name('dispatcher.requests.history');
     });
 
     // Master Routes

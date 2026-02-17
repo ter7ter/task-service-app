@@ -63,26 +63,31 @@
                                         <td>{{ $request->assignedTo->name ?? 'N/A' }}</td>
                                         <td>{{ $request->created_at->format('Y-m-d H:i') }}</td>
                                         <td>
-                                            @if ($request->status == 'new')
-                                                <form action="{{ route('dispatcher.requests.assign', $request->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <select name="master_id" class="form-select form-select-sm d-inline w-auto me-1">
-                                                        @foreach ($masters as $master)
-                                                            <option value="{{ $master->id }}">{{ $master->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <button type="submit" class="btn btn-sm btn-success">Assign</button>
-                                                </form>
-                                                <form action="{{ route('dispatcher.requests.cancel', $request->id) }}" method="POST" class="d-inline ms-1">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
-                                                </form>
-                                            @elseif ($request->status == 'assigned' || $request->status == 'in_progress')
-                                                <form action="{{ route('dispatcher.requests.cancel', $request->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
-                                                </form>
-                                            @endif
+                                            <div class="d-flex flex-wrap">
+                                                <a href="{{ route('dispatcher.requests.history', $request->id) }}" class="btn btn-sm btn-info me-1 mb-1">History</a>
+                                                @if ($request->status == 'new')
+                                                    <form action="{{ route('dispatcher.requests.assign', $request->id) }}" method="POST" class="d-inline mb-1">
+                                                        @csrf
+                                                        <div class="input-group input-group-sm">
+                                                            <select name="master_id" class="form-select form-select-sm">
+                                                                @foreach ($masters as $master)
+                                                                    <option value="{{ $master->id }}">{{ $master->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                                                        </div>
+                                                    </form>
+                                                    <form action="{{ route('dispatcher.requests.cancel', $request->id) }}" method="POST" class="d-inline ms-1 mb-1">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                                                    </form>
+                                                @elseif ($request->status == 'assigned' || $request->status == 'in_progress')
+                                                    <form action="{{ route('dispatcher.requests.cancel', $request->id) }}" method="POST" class="d-inline mb-1">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
