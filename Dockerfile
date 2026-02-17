@@ -25,10 +25,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Copy existing application directory contents
-COPY . .
+COPY . /var/www/html
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+# Ensure race_test.sh has Unix line endings and execute permissions
+RUN sed -i 's/\r$//' /var/www/html/race_test.sh && \
+    chmod +x /var/www/html/race_test.sh
 
 # Change current user to www-data
 USER www-data

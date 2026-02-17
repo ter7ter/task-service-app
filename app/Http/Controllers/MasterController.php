@@ -45,7 +45,7 @@ class MasterController extends Controller
 
             if (!$updated) {
                 DB::rollBack();
-                return back()->with('error', 'Заявка уже была взята в работу или ее статус изменился.');
+                return back()->with('error', 'Заявка уже была взята в работу другим мастером или ее статус изменился.');
             }
 
             DB::commit();
