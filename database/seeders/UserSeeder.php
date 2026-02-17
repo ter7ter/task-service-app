@@ -25,5 +25,12 @@ class UserSeeder extends Seeder
             'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'role' => 'master',
         ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Second Master',
+            'email' => 'master2@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role' => 'master',
+        ]);
     }
 }
