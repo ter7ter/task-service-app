@@ -16,7 +16,7 @@ class RequestController extends Controller
     {
         $validated = $request->validate([
             'clientName' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
+            'phone' => ['required', 'string', 'regex:/^[\+\d\s\-\(\)]+$/', 'max:25'],
             'address' => 'required|string|max:255',
             'problemText' => 'required|string',
         ]);
