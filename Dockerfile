@@ -9,12 +9,11 @@ RUN apk add --no-cache \
     libpng-dev \
     libzip-dev \
     libjpeg-turbo-dev \
-    postgresql-dev \
     oniguruma-dev \
     freetype-dev \
     icu-dev \
     $PHPIZE_DEPS && \
-    docker-php-ext-install -j$(nproc) gd pdo_mysql pdo_pgsql zip bcmath exif pcntl opcache && \
+    docker-php-ext-install -j$(nproc) gd pdo_mysql zip bcmath exif pcntl opcache && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd && \
     apk del $PHPIZE_DEPS
