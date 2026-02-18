@@ -1,8 +1,9 @@
 
 FROM php:8.4-fpm-alpine
 
-# Install dependencies
+# Install system dependencies
 RUN apk add --no-cache \
+    fcgi \
     git \
     curl \
     libpng-dev \
@@ -21,19 +22,25 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Install php-fpm-healthcheck
+ADD https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck /usr/local/bin/php-fpm-healthcheck
+RUN chmod +x /usr/local/bin/php-fpm-healthcheck
+
+# Enable php-fpm status page for healthcheck
+RUN sed -i 's/;pm.status_path = \/status/pm.status_path = \/status/' /usr/local/etc/php-fpm.d/www.conf
+
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy existing application directory contents
+# Copy application code
 COPY . /var/www/html
 
-# Ensure race_test.sh has Unix line endings and execute permissions
-RUN sed -i 's/\r$//' /var/www/html/race_test.sh && \
-    chmod +x /var/www/html/race_test.sh
+# Copy and prepare the entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Change current user to www-data
-USER www-data
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
-# Expose port 9000 and start php-fpm server
+# Expose port 9000 and start php-fpm server as the default command
 EXPOSE 9000
 CMD ["php-fpm"]

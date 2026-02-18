@@ -10,7 +10,7 @@ OUTPUT_FILE_2="/tmp/status_2.txt"
 
 echo "Starting race condition test for 'Take In Work' action..."
 
-# 1. Create a new request and assign it to the master
+# 1. Create a new request and assign it to the maste
 echo "Creating a new test request and assigning it to ${MASTER_EMAIL}..."
 REQUEST_ID=$(php artisan tinker --execute="
     \$master = App\Models\User::where('email', '${MASTER_EMAIL}')->first();
@@ -42,7 +42,7 @@ if [ -z "$CSRF_TOKEN" ]; then
     exit 1
 fi
 
-# 3. Log in the master user
+# 3. Log in the master use
 echo "Logging in as ${MASTER_EMAIL}..."
 curl -s -b "$COOKIE_FILE" -c "$COOKIE_FILE" -L -X POST \
      -H "Referer: $APP_URL/login" \

@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'Dispatcher User',
             'email' => 'dispatcher@example.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'role' => 'dispatcher',
         ]);
 
